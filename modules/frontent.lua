@@ -15,6 +15,25 @@ local selectedItem = nil
 
 local btns = {}
 
+function addButton(x,y,bw,bh,bg,fg,text,onclick)
+    screen.setBackgroundColor(bg)
+    screen.setTextColor(fg)
+
+    -- Set the button background
+    for iy=y,y+bh-1,1 do
+        for ix=x,x+bw-1,1 do
+            screen.setCursorPos(ix,iy)
+            screen.write(" ")
+        end
+    end
+
+    -- Write the stuff
+    local nx = x+math.floor(bw/2-#text:sub(1,bw)/2)
+    local ny = y+math.floor(bh/2)
+    screen.setCursorPos(nx,ny)
+    screen.write(text:sub(1,bw))
+end
+
 function addItem(x,y,data)
     screen.setCursorPos(x,y)
     screen.setBackgroundColor(ibg)
@@ -111,7 +130,8 @@ function renderItemDisplay()
 end
 
 function renderItemSelect()
-    
+    addButton(1,4,6,3,colors.red,colors.gray,"Back")
+    addButton()
 end
 
 function rerender()
