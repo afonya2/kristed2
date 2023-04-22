@@ -12,6 +12,7 @@ local ih = 3
 
 local cart = false
 local selectedItem = nil
+local selectedCount = 1
 
 local btns = {}
 
@@ -32,6 +33,14 @@ function addButton(x,y,bw,bh,bg,fg,text,onclick)
     local ny = y+math.floor(bh/2)
     screen.setCursorPos(nx,ny)
     screen.write(text:sub(1,bw))
+
+    table.insert(btns, {
+        x = x,
+        y = y,
+        w = x+bw-1,
+        h = y+bh-1,
+        onclick = onclick
+    })
 end
 
 function addItem(x,y,data)
@@ -63,6 +72,7 @@ function addItem(x,y,data)
         h = y+ih-1,
         onclick = function()
             selectedItem = data.id
+            selectedCount = 1
         end
     })
 end
@@ -72,7 +82,6 @@ function renderItems(items)
     local y = 3
     local id = 1
     for k,v in ipairs(items) do
-        v.id = id
         addItem(x,y,v)
         x = x + iw+1
         if x+iw >= w then
@@ -123,15 +132,41 @@ function renderItemDisplay()
         table.insert(items, {
             name = v.name,
             aviable = kristed.getItemCount(v.id),
-            price = v.price
+            price = v.price,
+            id = k
         })
     end
     renderItems(items)
 end
 
 function renderItemSelect()
-    addButton(1,4,6,3,colors.red,colors.gray,"Back")
-    addButton()
+    addButton(1,4,6,3,colors.red,colors.gray,"Back",function()
+        selectedItem = nil
+    end)
+    screen.setBackgroundColor(mbg)
+    screen.setTextColor(mfg)
+    screen.setCursorPos(1,8)
+    screen.write("Item: "..kristed.config.items[selectedItem].name)
+    addButton(1,9,3,3,colors.red,colors.gray,"-",function()
+        selectedCount = selectedCount - 1
+        if selectedCount < 1 then
+            selectedCount = 1
+        end
+    end)
+    screen.setBackgroundColor(mbg)
+    screen.setTextColor(mfg)
+    screen.setCursorPos(4,10)
+    screen.write(tostring(selectedCount))
+    local x,y = screen.getCursorPos()
+    addButton(x,9,3,3,colors.green,colors.gray,"+",function()
+        selectedCount = selectedCount + 1
+        if selectedCount > kristed.getItemCount(kristed.config.items[selectedItem].id) then
+            selectedCount = kristed.getItemCount(kristed.config.items[selectedItem].id)
+        end
+        if selectedCount < 1 then
+            selectedCount = 1
+        end
+    end)
 end
 
 function rerender()
@@ -160,6 +195,7 @@ function frontend()
                     rerender()
                 end
             end
+            os.sleep(0.1)
         end
     end
     parallel.waitForAny(clicker)
