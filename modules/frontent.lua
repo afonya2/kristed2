@@ -13,6 +13,7 @@ local ih = 3
 local cart = false
 local selectedItem = nil
 local selectedCount = 1
+local cartt = {}
 
 local btns = {}
 
@@ -114,16 +115,18 @@ function renderTitle()
     screen.write("Powered by Kristed2 v"..kristed.version)
 
     -- Add the cart to the top right corner
-    screen.setCursorPos(w-#("Cart")+1,2)
-    screen.setBackgroundColor(cart and mbg or tbg)
-    screen.setTextColor(cart and mfg or tfg)
-    screen.write("Cart")
+    addButton(w-#("Cart")+1,2,4,1,cart and mbg or tbg,cart and mfg or tfg,"Cart",function()
+        cart = true
+        selectedItem = nil
+        selectedCount = 1
+    end)
 
     -- Add the items to the top right corner
-    screen.setCursorPos(w-#("Cart")-#("Items"),2)
-    screen.setBackgroundColor(not cart and mbg or tbg)
-    screen.setTextColor(not cart and mfg or tfg)
-    screen.write("Items")
+    addButton(w-#("Cart")-#("Items"),2,5,1,not cart and mbg or tbg,not cart and mfg or tfg,"Items",function()
+        cart = false
+        selectedItem = nil
+        selectedCount = 1
+    end)
 end
 
 function renderItemDisplay()
@@ -140,6 +143,7 @@ function renderItemDisplay()
 end
 
 function renderItemSelect()
+    -- Render the back button and the item name
     addButton(1,4,6,3,colors.red,colors.gray,"Back",function()
         selectedItem = nil
     end)
@@ -147,6 +151,7 @@ function renderItemSelect()
     screen.setTextColor(mfg)
     screen.setCursorPos(1,8)
     screen.write("Item: "..kristed.config.items[selectedItem].name)
+    -- Render the count thing
     addButton(1,9,3,3,colors.red,colors.gray,"-",function()
         selectedCount = selectedCount - 1
         if selectedCount < 1 then
@@ -166,6 +171,14 @@ function renderItemSelect()
         if selectedCount < 1 then
             selectedCount = 1
         end
+    end)
+    -- Render the add cart button
+    addButton(1,13,13,3,colors.blue,colors.gray,"Add to cart",function()
+        table.insert(cartt, {
+            item = selectedItem,
+            count = selectedCount,
+        })
+        selectedItem = nil
     end)
 end
 
