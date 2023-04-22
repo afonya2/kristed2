@@ -1,5 +1,5 @@
-local kapi = require("kristapi")
-local frontend = require("frontend")
+local kapi = require("modules.kristapi")
+local frontend = require("modules.frontend")
 local alive = require("alive")
 
 local cfg = fs.open("config.conf","r")
