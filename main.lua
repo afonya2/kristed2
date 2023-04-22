@@ -1,14 +1,28 @@
-local kapi = require("modules.kristapi")
+local kapi = require("kristapi")
 local frontend = require("modules.frontend")
-local alive = require("alive")
+local alive = require("modules.alive")
 
 local cfg = fs.open("config.conf","r")
 local config = textutils.unserialise(cfg.readAll())
 cfg.close()
 
+local storages = {}
+local perps = peripheral.getNames()
+for k,v in ipairs(perps) do
+    local _, t = peripheral.getType(v)
+    if t == "inventory" then
+        table.insert(storages, {
+            id = v,
+            wrap = peripheral.wrap(v)
+        })
+    end
+end
+
 _G.kristed = {
     kapi = kapi,
-    config = config
+    config = config,
+    storages = storages,
+    version = "0.0.1-TEST"
 }
 
 print([[
