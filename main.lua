@@ -18,11 +18,37 @@ for k,v in ipairs(perps) do
     end
 end
 
+local itemCountCache = {}
+function getItemCount(id)
+    if itemCountCache[id] then
+        local out = itemCountCache[id].count
+        if os.clock() > itemCountCache[id].time+10 then
+            itemCountCache[id] = nil
+        end
+        return out
+    else
+        local co = 0
+        for k,v in ipairs(storages) do
+            for kk,vv in pairs(v.wrap.list()) do
+                if vv.name == id then
+                    co = co + vv.count
+                end
+            end
+        end
+        itemCountCache[id] = {
+            count = co,
+            time = os.clock()
+        }
+        return co
+    end
+end
+
 _G.kristed = {
     kapi = kapi,
     config = config,
     storages = storages,
-    version = "0.0.1-TEST"
+    version = "0.0.1-TEST",
+    getItemCount = getItemCount,
 }
 
 print([[

@@ -11,6 +11,9 @@ local iw = 12
 local ih = 3
 
 local cart = false
+local selectedItem = nil
+
+local btns = {}
 
 function addItem(x,y,data)
     screen.setCursorPos(x,y)
@@ -33,18 +36,31 @@ function addItem(x,y,data)
 
     screen.setCursorPos(x,y+2)
     screen.write(("Price "..data.price):sub(1,iw))
+
+    table.insert(btns, {
+        x = x,
+        y = y,
+        w = x+iw-1,
+        h = y+ih-1,
+        onclick = function()
+            selectedItem = data.id
+        end
+    })
 end
 
 function renderItems(items)
     local x = 1
     local y = 3
+    local id = 1
     for k,v in ipairs(items) do
+        v.id = id
         addItem(x,y,v)
         x = x + iw+1
         if x+iw >= w then
             x = 1
             y = y + ih+1
         end
+        id = id + 1
     end
 end
 
@@ -82,47 +98,51 @@ function renderTitle()
     screen.write("Items")
 end
 
+function renderItemDisplay()
+    local items = {}
+    for k,v in ipairs(kristed.config.items) do
+        table.insert(items, {
+            name = v.name,
+            aviable = kristed.getItemCount(v.id),
+            price = v.price
+        })
+    end
+    renderItems(items)
+end
+
+function renderItemSelect()
+    
+end
+
+function rerender()
+    screen.setBackgroundColor(mbg)
+    screen.clear()
+    btns = {}
+    if not cart and (selectedItem == nil) then
+        renderItemDisplay()
+    end
+    if not cart and (selectedItem ~= nil) then
+        renderItemSelect()
+    end
+    renderTitle()
+end
+
 function frontend()
     screen.setTextScale(kristed.config.scale)
     w,h = screen.getSize()
-    screen.setBackgroundColor(mbg)
-    screen.clear()
-    renderItems({
-        {
-            name = "Test",
-            aviable = 10,
-            price = 10
-        },
-        {
-            name = "Test2",
-            aviable = 2,
-            price = 3
-        },
-        {
-            name = "Test3",
-            aviable = 10,
-            price = 10
-        },
-        {
-            name = "Test4",
-            aviable = 2,
-            price = 3
-        },
-        {
-            name = "Test5",
-            aviable = 10,
-            price = 10
-        },
-        {
-            name = "Test6",
-            aviable = 2,
-            price = 3
-        }
-    })
-    renderTitle()
-    while true do
-        os.sleep(0.1)
+    rerender()
+    function clicker()
+        while true do
+            local event, side, x, y = os.pullEvent("monitor_touch")
+            for k,v in ipairs(btns) do
+                if (x >= v.x) and (x <= v.w) and (y >= v.y) and (y <= v.h) then
+                    v.onclick()
+                    rerender()
+                end
+            end
+        end
     end
+    parallel.waitForAny(clicker)
 end
 
 return frontend
