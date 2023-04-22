@@ -61,28 +61,40 @@ function addItem(x,y,data)
     screen.write(data.name:sub(1,iw))
 
     screen.setCursorPos(x,y+1)
-    screen.write(("Stock "..data.aviable):sub(1,iw))
+    if data.cart then
+        screen.write(("Count "..data.aviable):sub(1,iw))
+    else
+        screen.write(("Stock "..data.aviable):sub(1,iw))
+    end
 
     screen.setCursorPos(x,y+2)
     screen.write(("Price "..data.price):sub(1,iw))
 
-    table.insert(btns, {
-        x = x,
-        y = y,
-        w = x+iw-1,
-        h = y+ih-1,
-        onclick = function()
-            selectedItem = data.id
-            selectedCount = 1
-        end
-    })
+    if data.cart then
+        
+    else
+        table.insert(btns, {
+            x = x,
+            y = y,
+            w = x+iw-1,
+            h = y+ih-1,
+            onclick = function()
+                selectedItem = data.id
+                selectedCount = 1
+            end
+        })
+    end
 end
 
-function renderItems(items)
+function renderItems(items,isCart)
+    if isCart == nil then
+        isCart = false
+    end
     local x = 1
     local y = 3
     local id = 1
     for k,v in ipairs(items) do
+        v.cart = isCart
         addItem(x,y,v)
         x = x + iw+1
         if x+iw >= w then
@@ -182,6 +194,19 @@ function renderItemSelect()
     end)
 end
 
+function renderCart()
+    local items = {}
+    for k,v in ipairs(cartt) do
+        table.insert(items, {
+            name = kristed.config.items[v.item].name,
+            aviable = v.count,
+            price = kristed.config.items[v.item].price*v.count,
+            id = k
+        })
+    end
+    renderItems(items, true)
+end
+
 function rerender()
     screen.setBackgroundColor(mbg)
     screen.clear()
@@ -191,6 +216,9 @@ function rerender()
     end
     if not cart and (selectedItem ~= nil) then
         renderItemSelect()
+    end
+    if cart then
+        renderCart()
     end
     renderTitle()
 end
