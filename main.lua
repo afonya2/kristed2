@@ -49,6 +49,18 @@ _G.kristed = {
     storages = storages,
     version = "0.0.1-TEST",
     getItemCount = getItemCount,
+    getItemById = function(id)
+        for k,v in ipairs(config.items) do
+            if v.id == id then
+                return v
+            end
+        end
+    end,
+    checkout = {
+        currently = false,
+        price = 0,
+        cart = {}
+    }
 }
 
 print([[

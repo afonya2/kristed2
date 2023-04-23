@@ -9,6 +9,8 @@ local ibg = colors.gray
 local ifg = colors.lightGray
 local iw = 12
 local ih = 3
+local nw = 27
+local nh = 5
 
 local cart = false
 local selectedItem = nil
@@ -17,7 +19,10 @@ local cartt = {}
 
 local btns = {}
 
-function addButton(x,y,bw,bh,bg,fg,text,onclick)
+function addButton(x,y,bw,bh,bg,fg,text,onclick,norefresh)
+    if norefresh == nil then
+        norefresh = false
+    end
     screen.setBackgroundColor(bg)
     screen.setTextColor(fg)
 
@@ -40,7 +45,40 @@ function addButton(x,y,bw,bh,bg,fg,text,onclick)
         y = y,
         w = x+bw-1,
         h = y+bh-1,
-        onclick = onclick
+        onclick = onclick,
+        norefresh = norefresh
+    })
+end
+
+function notify(message,bg,fg)
+    local x = math.floor(w/2 - nw/2)
+    local y = math.floor(h/2 - nh/2)
+    screen.setCursorPos(x,y)
+    screen.setBackgroundColor(bg)
+    screen.setTextColor(fg)
+    -- Render the background background
+    print(x,y,"->",x+nw-1,y+nh-1)
+    for iy=y,y+nh-1,1 do
+        for ix=x,x+nw-1,1 do
+            screen.setCursorPos(ix,iy)
+            screen.write(" ")
+        end
+    end
+
+    -- Render the message
+    local nnx = x+math.floor(nw/2-#message:sub(1,nw)/2)
+    local nny = y+math.floor(nh/2)
+    screen.setCursorPos(nnx,nny)
+    screen.write(message:sub(1,nw))
+
+    btns = {}
+    table.insert(btns, {
+        x = 1,
+        y = 1,
+        w = w,
+        h = h,
+        onclick = function() end,
+        norefresh = false
     })
 end
 
@@ -71,7 +109,16 @@ function addItem(x,y,data)
     screen.write(("Price "..data.price):sub(1,iw))
 
     if data.cart then
-        
+        table.insert(btns, {
+            x = x,
+            y = y,
+            w = x+iw-1,
+            h = y+ih-1,
+            onclick = function()
+                table.remove(cartt, data.id)
+            end,
+            norefresh = false
+        })
     else
         table.insert(btns, {
             x = x,
@@ -81,7 +128,8 @@ function addItem(x,y,data)
             onclick = function()
                 selectedItem = data.id
                 selectedCount = 1
-            end
+            end,
+            norefresh = false
         })
     end
 end
@@ -205,6 +253,31 @@ function renderCart()
         })
     end
     renderItems(items, true)
+
+    addButton(w-#("Checkout")-1,h-3,10,3,colors.blue,colors.gray,"Checkout",function()
+        local calc = {}
+        for k,v in ipairs(cartt) do
+            calc[kristed.config.items[v.item].id] = (calc[kristed.config.items[v.item].id] and calc[kristed.config.items[v.item].id] or 0) + v.count
+        end
+        local canbe = true
+        local cbreason = ""
+        for k,v in pairs(calc) do
+            if kristed.getItemCount(k) < v then
+                canbe = false
+                cbreason = kristed.getItemById(k).name
+                break
+            end
+        end
+        if canbe then
+
+        else
+            notify("Not enough items: "..cbreason,colors.red,colors.blue)
+        end
+    end,true)
+
+    addButton(w-#("Checkout")-#("Clear")-4,h-3,7,3,colors.red,colors.gray,"Clear",function()
+        cartt = {}
+    end)
 end
 
 function rerender()
@@ -217,7 +290,7 @@ function rerender()
     if not cart and (selectedItem ~= nil) then
         renderItemSelect()
     end
-    if cart then
+    if cart and not kristed.checkout.currently then
         renderCart()
     end
     renderTitle()
@@ -233,7 +306,9 @@ function frontend()
             for k,v in ipairs(btns) do
                 if (x >= v.x) and (x <= v.w) and (y >= v.y) and (y <= v.h) then
                     v.onclick()
-                    rerender()
+                    if not v.norefresh then
+                        rerender()
+                    end
                 end
             end
             os.sleep(0.1)
