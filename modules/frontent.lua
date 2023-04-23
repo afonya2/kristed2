@@ -57,7 +57,6 @@ function notify(message,bg,fg)
     screen.setBackgroundColor(bg)
     screen.setTextColor(fg)
     -- Render the background background
-    print(x,y,"->",x+nw-1,y+nh-1)
     for iy=y,y+nh-1,1 do
         for ix=x,x+nw-1,1 do
             screen.setCursorPos(ix,iy)
@@ -255,6 +254,10 @@ function renderCart()
     renderItems(items, true)
 
     addButton(w-#("Checkout")-1,h-3,10,3,colors.blue,colors.gray,"Checkout",function()
+        if #cartt < 1 then
+            notify("You must buy something",colors.red,colors.blue)
+            return
+        end
         local calc = {}
         for k,v in ipairs(cartt) do
             calc[kristed.config.items[v.item].id] = (calc[kristed.config.items[v.item].id] and calc[kristed.config.items[v.item].id] or 0) + v.count
