@@ -59,6 +59,7 @@ _G.kristed = {
     checkout = {
         currently = false,
         price = 0,
+        paid = 0,
         cart = {}
     }
 }

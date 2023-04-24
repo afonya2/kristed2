@@ -9,8 +9,8 @@ local ibg = colors.gray
 local ifg = colors.lightGray
 local iw = 12
 local ih = 3
-local nw = 27
-local nh = 5
+local nw = 42
+local nh = 6
 
 local cart = false
 local selectedItem = nil
@@ -65,10 +65,20 @@ function notify(message,bg,fg)
     end
 
     -- Render the message
-    local nnx = x+math.floor(nw/2-#message:sub(1,nw)/2)
-    local nny = y+math.floor(nh/2)
-    screen.setCursorPos(nnx,nny)
-    screen.write(message:sub(1,nw))
+    if type(message) == "table" then
+        local nny = y+math.floor(nh/2)
+        for k,v in ipairs(message) do
+            local nnx = x+math.floor(nw/2-#v:sub(1,nw)/2)
+            local nnyn = nny-(math.floor(#message/2)-k)-1
+            screen.setCursorPos(nnx,nnyn)
+            screen.write(v:sub(1,nw))
+        end
+    else
+        local nnx = x+math.floor(nw/2-#message:sub(1,nw)/2)
+        local nny = y+math.floor(nh/2)
+        screen.setCursorPos(nnx,nny)
+        screen.write(message:sub(1,nw))
+    end
 
     btns = {}
     table.insert(btns, {
@@ -178,6 +188,10 @@ function renderTitle()
         cart = true
         selectedItem = nil
         selectedCount = 1
+        kristed.checkout.currently = false
+        kristed.checkout.price = 0
+        kristed.checkout.paid = 0
+        kristed.checkout.cart = {}
     end)
 
     -- Add the items to the top right corner
@@ -185,6 +199,10 @@ function renderTitle()
         cart = false
         selectedItem = nil
         selectedCount = 1
+        kristed.checkout.currently = false
+        kristed.checkout.price = 0
+        kristed.checkout.paid = 0
+        kristed.checkout.cart = {}
     end)
 end
 
@@ -287,6 +305,9 @@ function renderCart()
         if canbe then
             kristed.checkout.currently = true
             kristed.checkout.price = cost
+            kristed.checkout.paid = 0
+            kristed.checkout.cart = cartt
+            rerender()
         else
             notify("Not enough items: "..cbreason,colors.red,colors.blue)
         end
@@ -295,6 +316,15 @@ function renderCart()
     addButton(w-#("Checkout")-#("Clear")-4,h-3,7,3,colors.red,colors.gray,"Clear",function()
         cartt = {}
     end)
+end
+
+function renderCheckout()
+    notify({
+        "Waiting for payment to: "..kristed.config.address,
+        "Currently paid: "..kristed.checkout.paid,
+        "Remaining: "..(kristed.checkout.price-kristed.checkout.paid),
+        "Total: "..kristed.checkout.price
+    },colors.blue, colors.gray)
 end
 
 function rerender()
@@ -309,6 +339,9 @@ function rerender()
     end
     if cart and not kristed.checkout.currently then
         renderCart()
+    end
+    if cart and kristed.checkout.currently then
+        renderCheckout()
     end
     renderTitle()
 end
