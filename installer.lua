@@ -1,6 +1,6 @@
 print("Welcome to the Kristed2 installer!")
 
-local repo = "afonya2/ccftp"
+local repo = "afonya2/kristed2"
 local branch = "main"
 local files = {
     ["modules/alive.lua"] = "modules/alive.lua",
@@ -11,7 +11,7 @@ local files = {
     ["main.lua"] = "main.lua"
 }
 print("Downloading files...")
-for k,v in pairs(files[fi]) do
+for k,v in pairs(files) do
     print("Downloading file "..k)
     local url = "https://raw.githubusercontent.com/"..repo.."/"..branch.."/"..k
     local con = http.get({url = url, binary = true})
