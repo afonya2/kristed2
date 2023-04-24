@@ -52,7 +52,7 @@ _G.kristed = {
     kapi = kapi,
     config = config,
     storages = storages,
-    version = "0.0.1-TEST",
+    version = "0.1.0",
     getItemCount = getItemCount,
     getItemById = function(id)
         for k,v in ipairs(config.items) do
