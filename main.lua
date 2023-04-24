@@ -1,5 +1,6 @@
 local kapi = require("kristapi")
 local frontend = require("modules.frontend")
+local backed = require("modules.backend")
 local alive = require("modules.alive")
 
 local cfg = fs.open("config.conf","r")
@@ -43,6 +44,10 @@ function getItemCount(id)
     end
 end
 
+if kristed ~= nil then
+    kristed.ws.close()
+end
+
 _G.kristed = {
     kapi = kapi,
     config = config,
@@ -72,4 +77,4 @@ print([[
 | . \| |  | \__ \ ||  __/ (_| |/ /_
 |_|\_\_|  |_|___/\__\___|\__,_|____|
 ]])
-parallel.waitForAny(frontend, alive)
+parallel.waitForAny(frontend, backend, alive)
