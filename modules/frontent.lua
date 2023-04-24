@@ -115,7 +115,7 @@ function addItem(x,y,data)
     end
 
     screen.setCursorPos(x,y+2)
-    screen.write(("Price "..data.price):sub(1,iw))
+    screen.write(("Price "..data.price):sub(1,iw).."kst")
 
     if data.cart then
         table.insert(btns, {
