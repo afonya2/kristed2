@@ -44,7 +44,7 @@ function backend()
                     kristed.checkout.paid = kristed.checkout.paid + trans.value
                     if kristed.checkout.paid == kristed.checkout.price then
                         -- Make the item dropping thing
-                    elseif kristed.checkout.paid > kristed.check then
+                    elseif kristed.checkout.paid > kristed.checkout.price then
                         -- Make the item dropping thing
                         local dist = math.floor(kristed.checkout.paid - kristed.checkout.price)
                         if dist >= 1 then

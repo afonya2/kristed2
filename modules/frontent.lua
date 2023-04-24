@@ -325,7 +325,7 @@ function renderCheckout()
         "Remaining: "..(kristed.checkout.price-kristed.checkout.paid).."kst",
         "Total: "..kristed.checkout.price.."kst"
     },colors.blue, colors.gray)
-    if (kristed.checkout.price-kristed.checkout.paid) < 0 then
+    if (kristed.checkout.price-kristed.checkout.paid) <= 0 then
         cart = false
         selectedItem = nil
         selectedCount = 1
