@@ -43,6 +43,9 @@ function mysplit (inputstr, sep)
 end
 
 function api.parseMeta(meta)
+    if (meta == nil) or (meta == "") then
+        return {}
+    end
     local out = {}
     local a = mysplit(meta, ";")
     for k,v in ipairs(a) do
