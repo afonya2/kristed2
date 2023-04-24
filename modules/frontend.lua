@@ -10,7 +10,7 @@ local ifg = colors.lightGray
 local iw = 12
 local ih = 3
 local nw = 42
-local nh = 6
+local nh = 7
 
 local cart = false
 local selectedItem = nil
@@ -50,7 +50,10 @@ function addButton(x,y,bw,bh,bg,fg,text,onclick,norefresh)
     })
 end
 
-function notify(message,bg,fg)
+function notify(message,bg,fg,onclick)
+    if onclick == nil then
+        onclick = function() end
+    end
     local x = math.floor(w/2 - nw/2)
     local y = math.floor(h/2 - nh/2)
     screen.setCursorPos(x,y)
@@ -86,7 +89,7 @@ function notify(message,bg,fg)
         y = 1,
         w = w,
         h = h,
-        onclick = function() end,
+        onclick = onclick,
         norefresh = false
     })
 end
@@ -325,8 +328,14 @@ function renderCheckout()
         "Waiting for payment to: "..kristed.config.address,
         "Currently paid: "..kristed.checkout.paid.."kst",
         "Remaining: "..(kristed.checkout.price-kristed.checkout.paid).."kst",
-        "Total: "..kristed.checkout.price.."kst"
-    },colors.blue, colors.gray)
+        "Total: "..kristed.checkout.price.."kst",
+        "Click to cancel (NO REFUNDS)"
+    },colors.blue, colors.gray, function()
+        kristed.checkout.currently = false
+        kristed.checkout.price = 0
+        kristed.checkout.paid = 0
+        kristed.checkout.cart = {}
+    end)
     if (kristed.checkout.price-kristed.checkout.paid) <= 0 then
         cart = false
         selectedItem = nil
