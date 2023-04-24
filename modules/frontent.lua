@@ -217,6 +217,8 @@ function renderItemDisplay()
         })
     end
     renderItems(items)
+
+    addButton(w-#("Refresh")-1,h-3,10,3,colors.blue,colors.gray,"Refresh",function() end)
 end
 
 function renderItemSelect()
