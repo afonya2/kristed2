@@ -231,8 +231,15 @@ function renderItemSelect()
             selectedCount = 1
         end
     end)
+    -- Render the price(s)
+    screen.setBackgroundColor(mbg)
+    screen.setTextColor(mfg)
+    screen.setCursorPos(1,13)
+    screen.write("Price/i: "..kristed.config.items[selectedItem].price.."kst/i")
+    screen.setCursorPos(1,14)
+    screen.write("Price: "..kristed.config.items[selectedItem].price*selectedCount.."kst")
     -- Render the add cart button
-    addButton(1,13,13,3,colors.blue,colors.gray,"Add to cart",function()
+    addButton(1,16,13,3,colors.blue,colors.gray,"Add to cart",function()
         table.insert(cartt, {
             item = selectedItem,
             count = selectedCount,
@@ -243,6 +250,7 @@ end
 
 function renderCart()
     local items = {}
+    local cost = 0
     for k,v in ipairs(cartt) do
         table.insert(items, {
             name = kristed.config.items[v.item].name,
@@ -250,9 +258,14 @@ function renderCart()
             price = kristed.config.items[v.item].price*v.count,
             id = k
         })
+        cost = cost + (v.count*kristed.config.items[v.item].price)
     end
     renderItems(items, true)
 
+    screen.setBackgroundColor(mbg)
+    screen.setTextColor(mfg)
+    screen.setCursorPos(w-#("Cost: "..cost.."kst")+1,h-4)
+    screen.write("Cost: "..cost.."kst")
     addButton(w-#("Checkout")-1,h-3,10,3,colors.blue,colors.gray,"Checkout",function()
         if #cartt < 1 then
             notify("You must buy something",colors.red,colors.blue)
@@ -272,7 +285,8 @@ function renderCart()
             end
         end
         if canbe then
-
+            kristed.checkout.currently = true
+            kristed.checkout.price = cost
         else
             notify("Not enough items: "..cbreason,colors.red,colors.blue)
         end
