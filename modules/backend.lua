@@ -41,7 +41,17 @@ function backend()
             trans.meta = kristed.kapi.parseMeta(trans.metadata)
             if mindTrans(trans) then
                 if kristed.checkout.currently then
-
+                    kristed.checkout.paid = kristed.checkout.paid + trans.value
+                    if kristed.checkout.paid == kristed.checkout.price then
+                        -- Make the item dropping thing
+                    elseif kristed.checkout.paid > kristed.check then
+                        -- Make the item dropping thing
+                        local dist = math.floor(kristed.checkout.paid - kristed.checkout.price)
+                        if dist >= 1 then
+                            returnKrist(trans, dist, "Thank you for your purchase, here is your change!")
+                        end
+                    end
+                    os.queueEvent("kristed_rerender")
                 else
                     returnKrist(trans, trans.value, "Currently there is no checkout")
                 end

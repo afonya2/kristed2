@@ -377,7 +377,7 @@ function frontend()
     end
     function pupdate()
         while true do
-            os.pullEvent("rerender")
+            os.pullEvent("kristed_rerender")
             rerender()
             os.sleep(0.1)
         end
