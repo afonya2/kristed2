@@ -321,10 +321,21 @@ end
 function renderCheckout()
     notify({
         "Waiting for payment to: "..kristed.config.address,
-        "Currently paid: "..kristed.checkout.paid,
-        "Remaining: "..(kristed.checkout.price-kristed.checkout.paid),
-        "Total: "..kristed.checkout.price
+        "Currently paid: "..kristed.checkout.paid.."kst",
+        "Remaining: "..(kristed.checkout.price-kristed.checkout.paid).."kst",
+        "Total: "..kristed.checkout.price.."kst"
     },colors.blue, colors.gray)
+    if (kristed.checkout.price-kristed.checkout.paid) < 0 then
+        cart = false
+        selectedItem = nil
+        selectedCount = 1
+        kristed.checkout.currently = false
+        kristed.checkout.price = 0
+        kristed.checkout.paid = 0
+        kristed.checkout.cart = {}
+        cartt = {}
+        rerender()
+    end
 end
 
 function rerender()
@@ -364,7 +375,14 @@ function frontend()
             os.sleep(0.1)
         end
     end
-    parallel.waitForAny(clicker)
+    function pupdate()
+        while true do
+            os.pullEvent("rerender")
+            rerender()
+            os.sleep(0.1)
+        end
+    end
+    parallel.waitForAny(clicker,pupdate)
 end
 
 return frontend
