@@ -1,5 +1,6 @@
 # Kristed2
-The new version of the kristed shop, but only made by me
+## This project isn't part of apioframe
+The new version of the Kristed shop, but only made by me
 
 This shop system is designed to have a better gui than the old one
 
