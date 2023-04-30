@@ -71,7 +71,12 @@ function sendHook(trans, dist)
             :setFooter("Kristed v"..kristed.version)
             :setTimestamp()
             :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
-        kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()})
+        if kristed.checkout.whmsgid == nil then
+            local msg = kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()}) 
+            kristed.checkout.whmsgid = msg.id
+        else
+            kristed.dw.editMessage(kristed.config["webhook_url"], kristed.checkout.whmsgid, "", {emb.sendable()}) 
+        end
     end
 end
 
@@ -97,11 +102,11 @@ function backend()
 
                     if canbe then
                         kristed.checkout.paid = kristed.checkout.paid + trans.value
+                        sendHook(trans, math.floor(kristed.checkout.paid - kristed.checkout.price))
                         if kristed.checkout.paid == kristed.checkout.price then
                             for k,v in ipairs(kristed.checkout.cart) do
                                 dropItems(kristed.config.items[v.item].id, v.count)
                             end
-                            sendHook(trans, 0)
                         elseif kristed.checkout.paid > kristed.checkout.price then
                             for k,v in ipairs(kristed.checkout.cart) do
                                 dropItems(kristed.config.items[v.item].id, v.count)
@@ -110,7 +115,6 @@ function backend()
                             if dist >= 1 then
                                 returnKrist(trans, dist, "Thank you for your purchase, here is your change!")
                             end
-                            sendHook(trans, 0)
                         end
                         os.queueEvent("kristed_rerender")
                     else

@@ -6,7 +6,20 @@ function dw.sendMessage(url, username, avatar, content, embeds)
         ["avatar_url"] = avatar,
         embeds = embeds
     }
-    http.post(url, textutils.serialiseJSON(json), {["Content-Type"] = "application/json"})
+    local data = http.post(url.."?wait=true", textutils.serialiseJSON(json), {["Content-Type"] = "application/json"})
+    return textutils.unserialiseJSON(data.readAll())
+end
+function dw.editMessage(url, id, content, embeds)
+    local json = {
+        content = content,
+        embeds = embeds
+    }
+    http.request({
+        url = url.."/messages/"..id,
+        body = textutils.serialiseJSON(json),
+        headers = {["Content-Type"]="application/json"},
+        method = "PATCH"
+    })
 end
 function dw.createEmbed()
     local out = {
