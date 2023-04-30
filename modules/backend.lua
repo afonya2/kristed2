@@ -61,7 +61,7 @@ function sendHook(trans, dist)
             :setTitle("Purchase info")
             :setColor(3302600)
             :addField("From address", trans.from, true)
-            :addField("Value", kristed.checkout.paid.."kst", true)
+            :addField("Paid", kristed.checkout.paid.."kst", true)
             :addField("Return address", trans.meta["return"] and trans.meta["return"] or "Address", true)
             :addField("-", "-")
             :addField("Cart", citems, true)
@@ -71,7 +71,7 @@ function sendHook(trans, dist)
             :setFooter("Kristed v"..kristed.version)
             :setTimestamp()
             :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
-        dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()})
+        kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()})
     end
 end
 
