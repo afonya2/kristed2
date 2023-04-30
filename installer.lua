@@ -61,6 +61,13 @@ if yess == "y" then
     local privKey = io.read()
     print("Enter the turtle's network id")
     local selfId = io.read()
+    print("Do you want discord webhook enabled? (y/n)")
+    local whe = (io.read() == "y") and true or false
+    local whu = ""
+    if whe then
+        print("Enter the webhook's url")
+        whu = io.read()
+    end
 
     print("Configuring...")
     local confi = {
@@ -72,6 +79,8 @@ if yess == "y" then
         address = address,
         privKey = privKey,
         selfId = selfId,
+        webhook = whe,
+        ["webhook_url"] = whu
         items = {
             {
                 name = "Test",

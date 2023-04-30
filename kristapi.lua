@@ -57,8 +57,9 @@ function api.parseMeta(meta)
             if(b[1]:match("^.+@.+%.kst$")) then
                 local c = mysplit(b[1], "@")
                 out["metaname"] = c[1]
+            else
+                out[b[1]] = true
             end
-            --out[b[1]] = true
         end
     end
     return out
