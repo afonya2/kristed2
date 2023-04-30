@@ -8,8 +8,25 @@ local files = {
     ["modules/frontend.lua"] = "modules/frontend.lua",
     ["config.conf"] = "config.conf",
     ["kristapi.lua"] = "kristapi.lua",
+    ["discordWebhook.lua"] = "discordWebhook.lua",
     ["main.lua"] = "main.lua"
 }
+print("Scanning for old config files...")
+local cfgfiles = {
+    "config.conf"
+}
+local cfgcache = {}
+print("Do you want to keep your config files? (y/n)")
+local yass = io.read()
+if yass == "y" then
+    for k,v in ipairs(cfgfiles) do
+        if fs.exists(v) then
+            local h = fs.open(v, "rb")
+            cfgcache[v] = h.readAll()
+            h.close()
+        end
+    end
+end
 print("Downloading files...")
 for k,v in pairs(files) do
     print("Downloading file "..k)
@@ -19,6 +36,12 @@ for k,v in pairs(files) do
     h.write(con.readAll())
     h.close()
     print("done")
+end
+print("Loading old config files...")
+for k,v in pairs(cfgcache) do
+    local h = fs.open(k, "wb")
+    h.write(v)
+    h.close()
 end
 
 print("Do you want to configure your shop now? (y/n)")
