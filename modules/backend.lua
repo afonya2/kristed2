@@ -51,6 +51,30 @@ function dropItems(id, amount)
     end
 end
 
+function sendHook(trans, dist)
+    if kristed.config.webhook == true then
+        local citems = ""
+        for k,v in ipairs(kristed.checkout.cart) do
+            citems = citems .. kristed.config.items[v.item].name.." x"..v.count.."("..(v.count*kristed.config.items[v.item].price)..")\n"
+        end
+        local emb = kristed.dw.createEmbed()
+            :setTitle("Purchase info")
+            :setColor(3302600)
+            :addField("From address", trans.from, true)
+            :addField("Value", kristed.checkout.paid.."kst", true)
+            :addField("Return address", trans.meta["return"] and trans.meta["return"] or "Address", true)
+            :addField("-", "-")
+            :addField("Cart", citems, true)
+            :addField("Cost", kristed.checkout.price.."kst", true)
+            :addField("Change", dist.."kst", true)
+            :setAuthor("Kristed")
+            :setFooter("Kristed v"..kristed.version)
+            :setTimestamp()
+            :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
+        dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()})
+    end
+end
+
 function backend()
     sock = initSocket()
 
@@ -77,6 +101,7 @@ function backend()
                             for k,v in ipairs(kristed.checkout.cart) do
                                 dropItems(kristed.config.items[v.item].id, v.count)
                             end
+                            sendHook(trans, 0)
                         elseif kristed.checkout.paid > kristed.checkout.price then
                             for k,v in ipairs(kristed.checkout.cart) do
                                 dropItems(kristed.config.items[v.item].id, v.count)
@@ -85,6 +110,7 @@ function backend()
                             if dist >= 1 then
                                 returnKrist(trans, dist, "Thank you for your purchase, here is your change!")
                             end
+                            sendHook(trans, 0)
                         end
                         os.queueEvent("kristed_rerender")
                     else

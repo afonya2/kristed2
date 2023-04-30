@@ -1,4 +1,5 @@
 local kapi = require("kristapi")
+local dw = require("discordWebhook")
 local frontend = require("modules.frontend")
 local backed = require("modules.backend")
 local alive = require("modules.alive")
@@ -50,6 +51,7 @@ end
 
 _G.kristed = {
     kapi = kapi,
+    dw = dw,
     config = config,
     storages = storages,
     version = "0.1.0",
