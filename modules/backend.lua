@@ -35,6 +35,9 @@ end
 function dropItems(id, amount)
     local remaining = amount
     local function itemDrop(idd, amountt)
+        if amountt > 64 then
+            amountt = 64
+        end
         for k,v in ipairs(kristed.storages) do
             for kk,vv in pairs(v.wrap.list()) do
                 if vv.name == id then
