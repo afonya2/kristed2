@@ -185,6 +185,11 @@ function renderTitle()
     screen.setBackgroundColor(mbg)
     screen.setTextColor(mfg)
     screen.write("Powered by Kristed2 v"..kristed.version)
+    -- Add the shop owner label to the bottom left corner
+    screen.setCursorPos(w-#("Shop owned by: "..kristed.config.owner)+1,h)
+    screen.setBackgroundColor(mbg)
+    screen.setTextColor(mfg)
+    screen.write("Shop owned by: "..kristed.config.owner)
 
     -- Add the cart to the top right corner
     addButton(w-#("Cart")+1,2,4,1,cart and mbg or tbg,cart and mfg or tfg,"Cart",function()
