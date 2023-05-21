@@ -115,46 +115,50 @@ function rawNotify(message,bg,fg)
     end
 end
 
+local errored = false
+function onErr(err)
+    if errored then
+        return
+    end
+    errored = true
+    rawNotify({
+        "An error occurred",
+        "Please report this to the owner",
+        kristed.config.owner,
+        "And/or to the github repo",
+        "afonya/kristed2",
+        "And please specify this error message:",
+        err
+    }, colors.red, colors.white)
+    print(err)
+
+    if kristed.config.webhook == true then
+        local emb = kristed.dw.createEmbed()
+            :setTitle("An error occurred")
+            :setColor(13120050)
+            :addField("Please report this to the github repo", "afonya/kristed2")
+            :addField("And please specify this error message", "`"..err.."`")
+            :setAuthor("Kristed2")
+            :setFooter("Kristed2 v"..kristed.version)
+            :setTimestamp()
+            :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
+        kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()}) 
+    end
+end
+
 parallel.waitForAny(function()
     local ok,err = pcall(frontend)
     if not ok then
-        rawNotify({
-            "An error occurred",
-            "Please report this to the owner",
-            kristed.config.owner,
-            "And/or to the github repo",
-            "afonya/kristed2",
-            "And please specify this error message:",
-            err
-        }, colors.red, colors.white)
-        print(err)
+        onErr(err)
     end
 end, function()
     local ok,err = pcall(backend)
     if not ok then
-        rawNotify({
-            "An error occurred",
-            "Please report this to the owner",
-            kristed.config.owner,
-            "And/or to the github repo",
-            "afonya/kristed2",
-            "And please specify this error message:",
-            err
-        }, colors.red, colors.white)
-        print(err)
+        onErr(err)
     end
 end, function()
     local ok,err = pcall(alive)
     if not ok then
-        rawNotify({
-            "An error occurred",
-            "Please report this to the owner",
-            kristed.config.owner,
-            "And/or to the github repo",
-            "afonya/kristed2",
-            "And please specify this error message:",
-            err
-        }, colors.red, colors.white)
-        print(err)
+        onErr(err)
     end
 end)
