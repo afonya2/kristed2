@@ -79,4 +79,82 @@ print([[
 | . \| |  | \__ \ ||  __/ (_| |/ /_
 |_|\_\_|  |_|___/\__\___|\__,_|____|
 ]])
-parallel.waitForAny(frontend, backend, alive)
+
+function rawNotify(message,bg,fg)
+    local screen = peripheral.find("monitor")
+    local w,h = screen.getSize()
+    local nw = 52
+    local nh = 10
+    local x = math.floor(w/2 - nw/2)
+    local y = math.floor(h/2 - nh/2)
+    screen.setCursorPos(x,y)
+    screen.setBackgroundColor(bg)
+    screen.setTextColor(fg)
+    -- Render the background background
+    for iy=y,y+nh-1,1 do
+        for ix=x,x+nw-1,1 do
+            screen.setCursorPos(ix,iy)
+            screen.write(" ")
+        end
+    end
+
+    -- Render the message
+    if type(message) == "table" then
+        local nny = y+math.floor(nh/2)
+        for k,v in ipairs(message) do
+            local nnx = x+math.floor(nw/2-#v:sub(1,nw)/2)
+            local nnyn = nny-(math.floor(#message/2)-k)-1
+            screen.setCursorPos(nnx,nnyn)
+            screen.write(v:sub(1,nw))
+        end
+    else
+        local nnx = x+math.floor(nw/2-#message:sub(1,nw)/2)
+        local nny = y+math.floor(nh/2)
+        screen.setCursorPos(nnx,nny)
+        screen.write(message:sub(1,nw))
+    end
+end
+
+parallel.waitForAny(function()
+    local ok,err = pcall(frontend)
+    if not ok then
+        rawNotify({
+            "An error occurred",
+            "Please report this to the owner",
+            kristed.config.owner,
+            "And/or to the github repo",
+            "afonya/kristed2",
+            "And please specify this error message:",
+            err
+        }, colors.red, colors.white)
+        print(err)
+    end
+end, function()
+    local ok,err = pcall(backend)
+    if not ok then
+        rawNotify({
+            "An error occurred",
+            "Please report this to the owner",
+            kristed.config.owner,
+            "And/or to the github repo",
+            "afonya/kristed2",
+            "And please specify this error message:",
+            err
+        }, colors.red, colors.white)
+        print(err)
+    end
+end, function()
+    local ok,err = pcall(alive)
+    if not ok then
+        rawNotify({
+            "An error occurred",
+            "Please report this to the owner",
+            kristed.config.owner,
+            "And/or to the github repo",
+            "afonya/kristed2",
+            "And please specify this error message:",
+            err
+        }, colors.red, colors.white)
+        print(err)
+    end
+end)
