@@ -121,6 +121,29 @@ function onErr(err)
         return
     end
     errored = true
+    if err == "Terminated" then
+        local screen = peripheral.find("monitor")
+        screen.setBackgroundColor(colors.black)
+        screen.clear()
+
+        rawNotify({
+            kristed.config.shopname,
+            "The shop is currently offline"
+        }, colors.gray, colors.white)
+        print(err)
+    
+        if kristed.config.webhook == true then
+            local emb = kristed.dw.createEmbed()
+                :setTitle("The shop went offline")
+                :setColor(6579300)
+                :setAuthor("Kristed2")
+                :setFooter("Kristed2 v"..kristed.version)
+                :setTimestamp()
+                :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
+            kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()}) 
+        end
+        return
+    end
     rawNotify({
         "An error occurred",
         "Please report this to the owner",
