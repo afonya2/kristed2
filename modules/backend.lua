@@ -83,6 +83,66 @@ function sendHook(trans, dist)
     end
 end
 
+function giveReceipt(dist)
+    if kristed.config.giveReceipts == true then
+        local printer = peripheral.find("printer")
+        if (printer ~= nil) and (printer.getPaperLevel() > 0) and (printer.getInkLevel() > 0) then
+            printer.newPage()
+            printer.setPageTitle("Shop purchase")
+
+            printer.setCursorPos(1,1)
+            printer.write(kristed.config.shopname)
+            printer.setCursorPos(1,2)
+            printer.write(kristed.config.desc)
+            printer.setCursorPos(1,3)
+            printer.write("Owner: "..kristed.config.owner)
+            printer.setCursorPos(1,4)
+            printer.write(" --- RECEIPT --- ")
+            for k,v in ipairs(kristed.checkout.cart) do
+                printer.setCursorPos(1,4+k)
+                printer.write(kristed.config.items[v.item].name.." x"..v.count.."("..(v.count*kristed.config.items[v.item].price)..")")
+            end
+            printer.setCursorPos(1,4+#kristed.checkout.cart+1)
+            printer.write(" --- RECEIPT --- ")
+            printer.setCursorPos(1,4+#kristed.checkout.cart+2)
+            printer.write("Cost: "..kristed.checkout.price.."kst")
+            printer.setCursorPos(1,4+#kristed.checkout.cart+3)
+            printer.write("Paid: "..kristed.checkout.paid.."kst")
+            printer.setCursorPos(1,4+#kristed.checkout.cart+4)
+            printer.write("Change: "..dist.."kst")
+            printer.setCursorPos(1,4+#kristed.checkout.cart+6)
+            printer.write("Thank you for")
+            printer.setCursorPos(1,4+#kristed.checkout.cart+7)
+            printer.write("your purchase!")
+            
+            printer.endPage()
+            kristed.storages[1].wrap.pullItems(kristed.config.printerId, 8)
+            for k,v in ipairs(kristed.storages[1].wrap.list()) do
+                if v.name == "computercraft:printed_page" then
+                    kristed.storages[1].wrap.pushItems(kristed.config.selfId, k)
+                    turtle.drop()
+                    break
+                end
+            end
+        else
+            if kristed.config.webhook == true then
+                local emb = kristed.dw.createEmbed()
+                    :setTitle("Printer issues")
+                    :setColor(13120050)
+                    :addField("Printer attached?", printer ~= nil and "yes" or "no")
+                    :addField("Ink level", printer ~= nil and tostring(printer.getInkLevel()) or "Unknown", true)
+                    :addField("Paper level", printer ~= nil and tostring(printer.getPaperLevel()) or "Unknown", true)
+                    :addField("Please try:", "Filling your printer or set the giveReceipts in the config to `false`")
+                    :setAuthor("Kristed2")
+                    :setFooter("Kristed2 v"..kristed.version)
+                    :setTimestamp()
+                    :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
+                kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()})
+            end
+        end
+    end
+end
+
 function backend()
     sock = initSocket()
 
@@ -110,10 +170,12 @@ function backend()
                             for k,v in ipairs(kristed.checkout.cart) do
                                 dropItems(kristed.config.items[v.item].id, v.count)
                             end
+                            giveReceipt(math.floor(kristed.checkout.paid - kristed.checkout.price))
                         elseif kristed.checkout.paid > kristed.checkout.price then
                             for k,v in ipairs(kristed.checkout.cart) do
                                 dropItems(kristed.config.items[v.item].id, v.count)
                             end
+                            giveReceipt(math.floor(kristed.checkout.paid - kristed.checkout.price))
                             local dist = math.floor(kristed.checkout.paid - kristed.checkout.price)
                             if dist >= 1 then
                                 returnKrist(trans, dist, "Thank you for your purchase, here is your change!")
