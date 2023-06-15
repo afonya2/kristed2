@@ -1,4 +1,13 @@
-local modem = peripheral.find("modem")
+local modem = nil
+for k,v in ipairs(peripheral.getNames()) do
+    local a = peripheral.getType(v)
+    if a == "modem" then
+        if peripheral.wrap(v).isWireless() then 
+            modem = peripheral.wrap(v)
+            break
+        end
+    end
+end
 local PORT = 9773
 local TIME = 30
 
