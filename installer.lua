@@ -75,6 +75,8 @@ if yess == "y" then
         print("Enter the printers's id, starts with: printer_")
         gur = io.read()
     end
+    print("Do you want shopsync enabled? (y/n)")
+    local shoppy = (io.read() == "y") and true or false
 
     print("Configuring...")
     local confi = {
@@ -90,6 +92,7 @@ if yess == "y" then
         ["webhook_url"] = whu,
         giveReceipts = gir,
         printerId = gur,
+        shopsync = shoppy,
         items = {
             {
                 name = "Test",

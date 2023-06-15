@@ -3,6 +3,7 @@ local dw = require("discordWebhook")
 local frontend = require("modules.frontend")
 local backed = require("modules.backend")
 local alive = require("modules.alive")
+local shopsync = require("modules.shopsync")
 
 local cfg = fs.open("config.conf","r")
 local config = textutils.unserialise(cfg.readAll())
@@ -54,7 +55,7 @@ _G.kristed = {
     dw = dw,
     config = config,
     storages = storages,
-    version = "0.1.0",
+    version = "0.1.2",
     getItemCount = getItemCount,
     getItemById = function(id)
         for k,v in ipairs(config.items) do
@@ -181,6 +182,11 @@ end, function()
     end
 end, function()
     local ok,err = pcall(alive)
+    if not ok then
+        onErr(err)
+    end
+end, function()
+    local ok,err = pcall(shopsync)
     if not ok then
         onErr(err)
     end
