@@ -68,6 +68,13 @@ if yess == "y" then
         print("Enter the webhook's url")
         whu = io.read()
     end
+    print("Do you want to give receipts on purchases? (y/n)")
+    local gir = (io.read() == "y") and true or false
+    local gur = ""
+    if gir then
+        print("Enter the printers's id, starts with: printer_")
+        gur = io.read()
+    end
 
     print("Configuring...")
     local confi = {
@@ -80,7 +87,9 @@ if yess == "y" then
         privKey = privKey,
         selfId = selfId,
         webhook = whe,
-        ["webhook_url"] = whu
+        ["webhook_url"] = whu,
+        giveReceipts = gir,
+        printerId = gur,
         items = {
             {
                 name = "Test",
