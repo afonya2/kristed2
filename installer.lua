@@ -106,7 +106,7 @@ if yess == "y" then
     cof.write(textutils.serialise(confi))
     cof.close()
 
-    print("You still have to configure the items!")
+    print("You still have to configure the items and categories!")
 end
 
 print("Done")

@@ -15,6 +15,7 @@ local nh = 7
 local cart = false
 local selectedItem = nil
 local selectedCount = 1
+local selectedCategory = 1
 local cartt = {}
 
 local btns = {}
@@ -154,14 +155,34 @@ function renderItems(items,isCart)
     local y = 3
     local id = 1
     for k,v in ipairs(items) do
-        v.cart = isCart
-        addItem(x,y,v)
-        x = x + iw+1
-        if x+iw >= w then
-            x = 1
-            y = y + ih+1
+        if cart or (v.category == selectedCategory) then
+            v.cart = isCart
+            addItem(x,y,v)
+            x = x + iw+1
+            if x+iw >= w then
+                x = 1
+                y = y + ih+1
+            end
+            id = id + 1
         end
-        id = id + 1
+    end
+end
+
+function renderCats()
+    local x = w-#("Cart")+1
+    for k,v in ipairs(kristed.config.categories) do
+        x = x-#v.name-1
+        local bool = (selectedCategory == k) and not cart
+        addButton(x,2,#v.name,1, bool and mbg or tbg,bool and mfg or tfg,v.name,function()
+            cart = false
+            selectedItem = nil
+            selectedCount = 1
+            selectedCategory = k
+            kristed.checkout.currently = false
+            kristed.checkout.price = 0
+            kristed.checkout.paid = 0
+            kristed.checkout.cart = {}
+        end)
     end
 end
 
@@ -203,7 +224,7 @@ function renderTitle()
     end)
 
     -- Add the items to the top right corner
-    addButton(w-#("Cart")-#("Items"),2,5,1,not cart and mbg or tbg,not cart and mfg or tfg,"Items",function()
+    --[[addButton(w-#("Cart")-#("Items"),2,5,1,not cart and mbg or tbg,not cart and mfg or tfg,"Items",function()
         cart = false
         selectedItem = nil
         selectedCount = 1
@@ -211,7 +232,9 @@ function renderTitle()
         kristed.checkout.price = 0
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
-    end)
+    end)]]
+    -- Add the categories
+    renderCats()
 end
 
 function renderItemDisplay()
@@ -221,6 +244,7 @@ function renderItemDisplay()
             name = v.name,
             aviable = kristed.getItemCount(v.id),
             price = v.price,
+            category = v.category,
             id = k
         })
     end
