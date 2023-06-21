@@ -375,6 +375,17 @@ function renderCheckout()
         kristed.checkout.cart = {}
         kristed.checkout.refund = {}
         kristed.checkout.whmsgid = nil
+
+        if kristed.config.webhook == true then
+            local emb = kristed.dw.createEmbed()
+                :setTitle("Checkout cancelled")
+                :setColor(6579300)
+                :setAuthor("Kristed2")
+                :setFooter("Kristed2 v"..kristed.version)
+                :setTimestamp()
+                :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
+            kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()}) 
+        end 
     end)
     if (kristed.checkout.price-kristed.checkout.paid) <= 0 then
         cart = false
