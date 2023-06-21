@@ -182,6 +182,7 @@ function renderCats()
             kristed.checkout.price = 0
             kristed.checkout.paid = 0
             kristed.checkout.cart = {}
+            kristed.checkout.refund = {}
         end)
     end
 end
@@ -221,6 +222,7 @@ function renderTitle()
         kristed.checkout.price = 0
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
+        kristed.checkout.refund = {}
     end)
 
     -- Add the items to the top right corner
@@ -232,6 +234,7 @@ function renderTitle()
         kristed.checkout.price = 0
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
+        kristed.checkout.refund = {}
     end)]]
     -- Add the categories
     renderCats()
@@ -341,6 +344,7 @@ function renderCart()
             kristed.checkout.price = cost
             kristed.checkout.paid = 0
             kristed.checkout.cart = cartt
+            kristed.checkout.refund = {}
             rerender()
         else
             notify("Not enough items: "..cbreason,colors.red,colors.blue)
@@ -358,21 +362,25 @@ function renderCheckout()
         "Currently paid: "..kristed.checkout.paid.."kst",
         "Remaining: "..(kristed.checkout.price-kristed.checkout.paid).."kst",
         "Total: "..kristed.checkout.price.."kst",
-        "Click to cancel (NO REFUNDS)"
+        "Click to cancel"
     },colors.blue, colors.gray, function()
+        kristed.refundCheckout()
         kristed.checkout.currently = false
         kristed.checkout.price = 0
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
+        kristed.checkout.refund = {}
     end)
     if (kristed.checkout.price-kristed.checkout.paid) <= 0 then
         cart = false
         selectedItem = nil
         selectedCount = 1
+        selectedCategory = 1
         kristed.checkout.currently = false
         kristed.checkout.price = 0
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
+        kristed.checkout.refund = {}
         cartt = {}
         rerender()
     end

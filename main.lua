@@ -68,9 +68,25 @@ _G.kristed = {
         currently = false,
         price = 0,
         paid = 0,
-        cart = {}
+        cart = {},
+        refund = {}
     }
 }
+
+function kristed.refundCheckout()
+    local function returnKrist(from,returnn,amount,message)
+        if returnn then
+            kristed.kapi.makeTransaction(kristed.config.privKey, from, amount, returnn..(message ~= nil and ";message="..message or ""))
+        else
+            kristed.kapi.makeTransaction(kristed.config.privKey, from, amount, (message ~= nil and ";message="..message or ""))
+        end
+    end
+    if kristed.checkout.currently then
+        for k,v in ipairs(kristed.checkout.refund) do
+            returnKrist(v.address, v["return"], v.value, "Transaction cancelled")
+        end
+    end
+end
 
 print([[
  _  __     _     _           _ ___

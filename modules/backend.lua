@@ -165,6 +165,11 @@ function backend()
 
                     if canbe then
                         kristed.checkout.paid = kristed.checkout.paid + trans.value
+                        table.insert(kristed.checkout.refund, {
+                            address = trans.from,
+                            ["return"] = trans.meta["return"],
+                            value = trans.value
+                        })
                         sendHook(trans, math.floor(kristed.checkout.paid - kristed.checkout.price))
                         if kristed.checkout.paid == kristed.checkout.price then
                             for k,v in ipairs(kristed.checkout.cart) do
