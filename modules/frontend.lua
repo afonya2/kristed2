@@ -183,6 +183,7 @@ function renderCats()
             kristed.checkout.paid = 0
             kristed.checkout.cart = {}
             kristed.checkout.refund = {}
+            kristed.checkout.whmsgid = nil
         end)
     end
 end
@@ -223,6 +224,7 @@ function renderTitle()
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
         kristed.checkout.refund = {}
+        kristed.checkout.whmsgid = nil
     end)
 
     -- Add the items to the top right corner
@@ -235,6 +237,7 @@ function renderTitle()
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
         kristed.checkout.refund = {}
+        kristed.checkout.whmsgid = nil
     end)]]
     -- Add the categories
     renderCats()
@@ -345,6 +348,7 @@ function renderCart()
             kristed.checkout.paid = 0
             kristed.checkout.cart = cartt
             kristed.checkout.refund = {}
+            kristed.checkout.whmsgid = nil
             rerender()
         else
             notify("Not enough items: "..cbreason,colors.red,colors.blue)
@@ -370,6 +374,7 @@ function renderCheckout()
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
         kristed.checkout.refund = {}
+        kristed.checkout.whmsgid = nil
     end)
     if (kristed.checkout.price-kristed.checkout.paid) <= 0 then
         cart = false
@@ -381,6 +386,7 @@ function renderCheckout()
         kristed.checkout.paid = 0
         kristed.checkout.cart = {}
         kristed.checkout.refund = {}
+        kristed.checkout.whmsgid = nil
         cartt = {}
         rerender()
     end

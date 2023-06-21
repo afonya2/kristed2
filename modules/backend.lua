@@ -176,6 +176,7 @@ function backend()
                                 dropItems(kristed.config.items[v.item].id, v.count)
                             end
                             giveReceipt(math.floor(kristed.checkout.paid - kristed.checkout.price))
+                            kristed.checkout.whmsgid = nil
                         elseif kristed.checkout.paid > kristed.checkout.price then
                             for k,v in ipairs(kristed.checkout.cart) do
                                 dropItems(kristed.config.items[v.item].id, v.count)
@@ -185,6 +186,7 @@ function backend()
                             if dist >= 1 then
                                 returnKrist(trans, dist, "Thank you for your purchase, here is your change!")
                             end
+                            kristed.checkout.whmsgid = nil
                         end
                         os.queueEvent("kristed_rerender")
                     else
