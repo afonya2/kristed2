@@ -55,7 +55,7 @@ _G.kristed = {
     dw = dw,
     config = config,
     storages = storages,
-    version = "0.1.2",
+    version = "0.1.3",
     getItemCount = getItemCount,
     getItemById = function(id)
         for k,v in ipairs(config.items) do
