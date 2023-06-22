@@ -7,6 +7,7 @@ local files = {
     ["modules/backend.lua"] = "modules/backend.lua",
     ["modules/frontend.lua"] = "modules/frontend.lua",
     ["modules/shopsync.lua"] = "modules/shopsync.lua",
+    ["modules/dynamicPricing.lua"] = "modules/dynamicPricing.lua",
     ["config.conf"] = "config.conf",
     ["kristapi.lua"] = "kristapi.lua",
     ["discordWebhook.lua"] = "discordWebhook.lua",

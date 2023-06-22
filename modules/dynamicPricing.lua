@@ -7,13 +7,18 @@ function dynamicPricing()
     while true do
         if kristed.config.dynamicPricing then
             for k,v in ipairs(kristed.config.items) do
-                local ic = v.normalStock / kristed.getItemCount(v.id)
-                local np = mainPrices[k] * ic
-                np = math.floor(np*100)/100
-                if np == 0 then
-                    np = mainPrices[k]
+                local icc = kristed.getItemCount(v.id)
+                if icc > 0 then
+                    local ic = v.normalStock / icc
+                    local np = mainPrices[k] * ic
+                    np = math.floor(np*100)/100
+                    if np == 0 then
+                        np = mainPrices[k]
+                    end
+                    kristed.config.items[k].price = np
+                else
+                    kristed.config.items[k].price = mainPrices[k]
                 end
-                kristed.config.items[k].price = np
             end
         end
         os.sleep(0)
