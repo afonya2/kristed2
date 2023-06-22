@@ -188,6 +188,11 @@ function onErr(err)
 end
 
 parallel.waitForAny(function()
+    local ok,err = pcall(dynamicPricing)
+    if not ok then
+        onErr(err)
+    end
+end, function()
     local ok,err = pcall(frontend)
     if not ok then
         onErr(err)
@@ -204,11 +209,6 @@ end, function()
     end
 end, function()
     local ok,err = pcall(shopsync)
-    if not ok then
-        onErr(err)
-    end
-end, function()
-    local ok,err = pcall(dynamicPricing)
     if not ok then
         onErr(err)
     end
