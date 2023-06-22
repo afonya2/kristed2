@@ -185,6 +185,9 @@ function renderItems(items,isCart)
             longg("Price "..v.price.."kst")
         end
     end
+    if longest < iw then
+        longest = iw
+    end
     iw = longest
     for k,v in ipairs(items) do
         if cart or (v.category == selectedCategory) then
