@@ -109,7 +109,8 @@ if yess == "y" then
                 id = "minecraft:redstone",
                 price = 1,
                 category = 1,
-                normalStock = 10
+                normalStock = 10,
+                forcePrice = false
             }
         }
     }
