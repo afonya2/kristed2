@@ -12,6 +12,24 @@ local ih = 3
 local nw = 42
 local nh = 7
 
+if fs.exists("theme.conf") then
+    local them = fs.open("theme.conf","r")
+    local themd = textutils.unserialise(them.readAll())
+    them.close()
+
+    mbg = themd.mainBg
+    mfg = themd.mainFg
+    tbg = themd.titleBg
+    fbg = themd.titleFg
+    ibg = themd.itemBg
+    ifg = themd.itemFg
+
+    iw = themd.itemWidth
+    ih = themd.itemHeight
+    nw = themd.notificationWidth
+    nh = themd.notificationHeight
+end
+
 local cart = false
 local selectedItem = nil
 local selectedCount = 1
