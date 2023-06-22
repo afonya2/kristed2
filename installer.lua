@@ -78,6 +78,8 @@ if yess == "y" then
     end
     print("Do you want shopsync enabled? (y/n)")
     local shoppy = (io.read() == "y") and true or false
+    print("Do you want dynamic pricing enabled? (y/n)")
+    local dp = (io.read() == "y") and true or false
 
     print("Configuring...")
     local confi = {
@@ -94,11 +96,19 @@ if yess == "y" then
         giveReceipts = gir,
         printerId = gur,
         shopsync = shoppy,
+        dynamicPricing = dp,
+        categories = {
+            {
+                name = "Items"
+            }
+        },
         items = {
             {
                 name = "Test",
                 id = "minecraft:redstone",
-                price = 1
+                price = 1,
+                category = 1,
+                normalStock = 10
             }
         }
     }
