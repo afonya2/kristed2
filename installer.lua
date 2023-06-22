@@ -9,13 +9,15 @@ local files = {
     ["modules/shopsync.lua"] = "modules/shopsync.lua",
     ["modules/dynamicPricing.lua"] = "modules/dynamicPricing.lua",
     ["config.conf"] = "config.conf",
+    ["theme.conf"] = "theme.conf",
     ["kristapi.lua"] = "kristapi.lua",
     ["discordWebhook.lua"] = "discordWebhook.lua",
     ["main.lua"] = "main.lua"
 }
 print("Scanning for old config files...")
 local cfgfiles = {
-    "config.conf"
+    "config.conf",
+    "theme.conf",
 }
 local cfgcache = {}
 print("Do you want to keep your config files? (y/n)")
