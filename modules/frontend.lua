@@ -154,6 +154,20 @@ function renderItems(items,isCart)
     local x = 1
     local y = 3
     local id = 1
+    local longest = 0
+    local function longg(str)
+        if #str > longest then
+            longest = #str
+        end
+    end
+    for k,v in ipairs(items) do
+        if cart or (v.category == selectedCategory) then
+            longg(v.name)
+            longg("Stock "..v.aviable)
+            longg("Price "..v.price.."kst")
+        end
+    end
+    iw = longest
     for k,v in ipairs(items) do
         if cart or (v.category == selectedCategory) then
             v.cart = isCart
