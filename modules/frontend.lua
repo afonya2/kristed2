@@ -7,6 +7,7 @@ local tbg = colors.red
 local tfg = colors.lightGray
 local ibg = colors.gray
 local ifg = colors.lightGray
+local diw = 16
 local iw = 16
 local ih = 3
 local nw = 42
@@ -24,6 +25,7 @@ if fs.exists("theme.conf") then
     ibg = themd.itemBg
     ifg = themd.itemFg
 
+    diw = themd.itemWidth
     iw = themd.itemWidth
     ih = themd.itemHeight
     nw = themd.notificationWidth
@@ -185,8 +187,8 @@ function renderItems(items,isCart)
             longg("Price "..v.price.."kst")
         end
     end
-    if longest < iw then
-        longest = iw
+    if longest < diw then
+        longest = diw
     end
     iw = longest
     for k,v in ipairs(items) do
