@@ -172,7 +172,7 @@ function renderItems(items,isCart)
         isCart = false
     end
     local x = 1
-    local y = 3
+    local y = 4
     local id = 1
     local longest = 0
     local function longg(str)
@@ -210,7 +210,7 @@ function renderCats()
     for k,v in ipairs(kristed.config.categories) do
         x = x-#v.name-1
         local bool = (selectedCategory == k) and not cart
-        addButton(x,2,#v.name,1, bool and mbg or tbg,bool and mfg or tfg,v.name,function()
+        addButton(x,3,#v.name,1, bool and mbg or tbg,bool and mfg or tfg,v.name,function()
             cart = false
             selectedItem = nil
             selectedCount = 1
@@ -226,11 +226,13 @@ function renderCats()
 end
 
 function renderTitle()
-    -- Set the first two lines colored
+    -- Set the first three lines colored
     screen.setBackgroundColor(tbg)
     screen.setCursorPos(1,1)
     screen.clearLine()
     screen.setCursorPos(1,2)
+    screen.clearLine()
+    screen.setCursorPos(1,3)
     screen.clearLine()
 
     -- Writing the shopname and the description
@@ -252,7 +254,7 @@ function renderTitle()
     screen.write("Shop owned by: "..kristed.config.owner)
 
     -- Add the cart to the top right corner
-    addButton(w-#("Cart")+1,2,4,1,cart and mbg or tbg,cart and mfg or tfg,"Cart",function()
+    addButton(w-#("Cart")+1,3,4,1,cart and mbg or tbg,cart and mfg or tfg,"Cart",function()
         cart = true
         selectedItem = nil
         selectedCount = 1
@@ -265,7 +267,7 @@ function renderTitle()
     end)
 
     -- Add the items to the top right corner
-    --[[addButton(w-#("Cart")-#("Items"),2,5,1,not cart and mbg or tbg,not cart and mfg or tfg,"Items",function()
+    --[[addButton(w-#("Cart")-#("Items"),3,5,1,not cart and mbg or tbg,not cart and mfg or tfg,"Items",function()
         cart = false
         selectedItem = nil
         selectedCount = 1
@@ -298,15 +300,15 @@ end
 
 function renderItemSelect()
     -- Render the back button and the item name
-    addButton(1,4,6,3,colors.red,colors.gray,"Back",function()
+    addButton(1,5,6,3,colors.red,colors.gray,"Back",function()
         selectedItem = nil
     end)
     screen.setBackgroundColor(mbg)
     screen.setTextColor(mfg)
-    screen.setCursorPos(1,8)
+    screen.setCursorPos(1,9)
     screen.write("Item: "..kristed.config.items[selectedItem].name)
     -- Render the count thing
-    addButton(1,9,3,3,colors.red,colors.gray,"-",function()
+    addButton(1,10,3,3,colors.red,colors.gray,"-",function()
         selectedCount = selectedCount - 1
         if selectedCount < 1 then
             selectedCount = 1
@@ -314,10 +316,10 @@ function renderItemSelect()
     end)
     screen.setBackgroundColor(mbg)
     screen.setTextColor(mfg)
-    screen.setCursorPos(4,10)
+    screen.setCursorPos(4,11)
     screen.write(tostring(selectedCount))
     local x,y = screen.getCursorPos()
-    addButton(x,9,3,3,colors.green,colors.gray,"+",function()
+    addButton(x,10,3,3,colors.green,colors.gray,"+",function()
         selectedCount = selectedCount + 1
         if selectedCount > kristed.getItemCount(kristed.config.items[selectedItem].id) then
             selectedCount = kristed.getItemCount(kristed.config.items[selectedItem].id)
@@ -329,12 +331,12 @@ function renderItemSelect()
     -- Render the price(s)
     screen.setBackgroundColor(mbg)
     screen.setTextColor(mfg)
-    screen.setCursorPos(1,13)
-    screen.write("Price/i: "..kristed.config.items[selectedItem].price.."kst/i")
     screen.setCursorPos(1,14)
+    screen.write("Price/i: "..kristed.config.items[selectedItem].price.."kst/i")
+    screen.setCursorPos(1,15)
     screen.write("Price: "..kristed.config.items[selectedItem].price*selectedCount.."kst")
     -- Render the add cart button
-    addButton(1,16,13,3,colors.blue,colors.gray,"Add to cart",function()
+    addButton(1,17,13,3,colors.blue,colors.gray,"Add to cart",function()
         table.insert(cartt, {
             item = selectedItem,
             count = selectedCount,
