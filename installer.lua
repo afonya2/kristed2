@@ -102,7 +102,8 @@ if yess == "y" then
         dynamicPricing = dp,
         categories = {
             {
-                name = "Items"
+                name = "Items",
+                forcePrice = false
             }
         },
         items = {

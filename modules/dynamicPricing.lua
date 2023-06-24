@@ -8,7 +8,8 @@ function dynamicPricing()
         if kristed.config.dynamicPricing then
             for k,v in ipairs(kristed.config.items) do
                 local icc = kristed.getItemCount(v.id)
-                if (icc > 0) and (not v.forcePrice) then
+                local catt = kristed.config.categories[v.category]
+                if (icc > 0) and (not v.forcePrice) and (not catt.forcePrice) then
                     local ic = v.normalStock / icc
                     local np = mainPrices[k] * ic
                     np = math.floor(np*100)/100
