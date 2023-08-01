@@ -13,6 +13,7 @@ local ih = 3
 local nw = 42
 local nh = 7
 local webhookbuffer = {}
+webhookbuffer.CheckOutCancel = {msg={},time=os.clock(),times=0}
 
 if fs.exists("theme.conf") then
     local them = fs.open("theme.conf","r")
@@ -415,8 +416,8 @@ function renderCheckout()
         kristed.checkout.cart = {}
         kristed.checkout.refund = {}
         kristed.checkout.whmsgid = nil
-
-        if kristed.config.webhook == true and (os.epoch() - webhookbuffer.CheckOutCancel.time)/1000 < 60 then
+        print(os.clock(),webhookbuffer.CheckOutCancel.time)
+        if kristed.config.webhook == true and webhookbuffer.CheckOutCancel.times ~= 0 and (os.clock() - webhookbuffer.CheckOutCancel.time) < 60 then
             local emb = kristed.dw.createEmbed()
                 :setTitle("Checkout cancelled x"..webhookbuffer.CheckOutCancel.times+1)
                 :setColor(6579300)
@@ -424,8 +425,8 @@ function renderCheckout()
                 :setFooter("Kristed2 v"..kristed.version)
                 :setTimestamp()
                 :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
-            local msg = kristed.dw.editMessage(kristed.config["webhook_url"],webhookbuffer.CheckOutCancel.id,"",{emb.sendable()})
-            webhookbuffer.CheckOutCancel = {msg=msg,time=os.epoch("local"),times=webhookbuffer.CheckOutCancel.times+1}
+            kristed.dw.editMessage(kristed.config["webhook_url"],webhookbuffer.CheckOutCancel.msg.id,"",{emb.sendable()})
+            webhookbuffer.CheckOutCancel = {msg=webhookbuffer.CheckOutCancel.msg,time=os.epoch("local"),times=webhookbuffer.CheckOutCancel.times+1}
         elseif kristed.config.webhook == true then
             local emb = kristed.dw.createEmbed()
                 :setTitle("Checkout cancelled")
@@ -436,7 +437,7 @@ function renderCheckout()
                 :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
             local msg = kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()})
             webhookbuffer.CheckOutCancel = {msg=msg,time=os.epoch("local"),times=1}
-        end 
+        end
     end)
     if (kristed.checkout.price-kristed.checkout.paid) <= 0 then
         cart = false
