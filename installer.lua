@@ -65,6 +65,8 @@ if yess == "y" then
     local privKey = io.read()
     print("Enter the turtle's network id")
     local selfId = io.read()
+    print("Enter the monitor's network id")
+    local monId = io.read()
     print("Do you want discord webhook enabled? (y/n)")
     local whe = (io.read() == "y") and true or false
     local whu = ""
@@ -94,6 +96,7 @@ if yess == "y" then
         address = address,
         privKey = privKey,
         selfId = selfId,
+        monitorId = monId,
         webhook = whe,
         ["webhook_url"] = whu,
         giveReceipts = gir,
