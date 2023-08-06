@@ -12,6 +12,8 @@ local iw = 16
 local ih = 3
 local nw = 42
 local nh = 7
+local webhookbuffer = {}
+webhookbuffer.CheckOutCancel = {msg={},time=os.clock(),times=0}
 
 if fs.exists("theme.conf") then
     local them = fs.open("theme.conf","r")
@@ -414,8 +416,18 @@ function renderCheckout()
         kristed.checkout.cart = {}
         kristed.checkout.refund = {}
         kristed.checkout.whmsgid = nil
-
-        if kristed.config.webhook == true then
+        print(os.clock(),webhookbuffer.CheckOutCancel.time)
+        if kristed.config.webhook == true and webhookbuffer.CheckOutCancel.times ~= 0 and (os.clock() - webhookbuffer.CheckOutCancel.time) < 60 then
+            local emb = kristed.dw.createEmbed()
+                :setTitle("Checkout cancelled x"..webhookbuffer.CheckOutCancel.times+1)
+                :setColor(6579300)
+                :setAuthor("Kristed2")
+                :setFooter("Kristed2 v"..kristed.version)
+                :setTimestamp()
+                :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
+            kristed.dw.editMessage(kristed.config["webhook_url"],webhookbuffer.CheckOutCancel.msg.id,"",{emb.sendable()})
+            webhookbuffer.CheckOutCancel = {msg=webhookbuffer.CheckOutCancel.msg,time=os.epoch("local"),times=webhookbuffer.CheckOutCancel.times+1}
+        elseif kristed.config.webhook == true then
             local emb = kristed.dw.createEmbed()
                 :setTitle("Checkout cancelled")
                 :setColor(6579300)
@@ -423,8 +435,9 @@ function renderCheckout()
                 :setFooter("Kristed2 v"..kristed.version)
                 :setTimestamp()
                 :setThumbnail("https://github.com/afonya2/kristed2/raw/main/logo.png")
-            kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()}) 
-        end 
+            local msg = kristed.dw.sendMessage(kristed.config["webhook_url"], kristed.config.shopname, "https://github.com/afonya2/kristed2/raw/main/logo.png", "", {emb.sendable()})
+            webhookbuffer.CheckOutCancel = {msg=msg,time=os.epoch("local"),times=1}
+        end
     end)
     if (kristed.checkout.price-kristed.checkout.paid) <= 0 then
         cart = false
@@ -467,7 +480,10 @@ function frontend()
     rerender()
     function clicker()
         while true do
-            local event, side, x, y = os.pullEvent("monitor_touch")
+            local event, side, x, y
+            repeat
+                event, side, x, y = os.pullEvent("monitor_touch")
+            until side == kristed.config.monitorId
             for k,v in ipairs(btns) do
                 if (x >= v.x) and (x <= v.w) and (y >= v.y) and (y <= v.h) then
                     v.onclick()
