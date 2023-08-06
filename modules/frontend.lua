@@ -301,44 +301,47 @@ function renderItemDisplay()
 end
 
 function renderItemSelect()
+    local function writeToCenter(text, y)
+        local w,h = screen.getSize()
+        screen.setCursorPos(math.floor(w/2-#text/2)+1,y)
+        screen.write(text)
+    end
     -- Render the back button and the item name
-    addButton(1,5,6,3,colors.red,colors.gray,"Back",function()
+    local w, h = screen.getSize()
+    addButton(w-6,h-4,6,3,colors.red,colors.gray,"Back",function()
         selectedItem = nil
     end)
     screen.setBackgroundColor(mbg)
     screen.setTextColor(mfg)
-    screen.setCursorPos(1,9)
-    screen.write("Item: "..kristed.config.items[selectedItem].name)
+    writeToCenter("Item: "..kristed.config.items[selectedItem].name, 9)
     -- Render the count thing
-    addButton(1,10,3,3,colors.red,colors.gray,"-",function()
-        selectedCount = selectedCount - 1
-        if selectedCount < 1 then
-            selectedCount = 1
-        end
+    writeToCenter(tostring(selectedCount), 11)
+    addButton(math.floor((w)/2)-4,10,3,3,colors.red,colors.gray,"-",function()
+        selectedCount = selectedCount - math.min(1,selectedCount-1)
     end)
-    screen.setBackgroundColor(mbg)
-    screen.setTextColor(mfg)
-    screen.setCursorPos(4,11)
-    screen.write(tostring(selectedCount))
-    local x,y = screen.getCursorPos()
-    addButton(x,10,3,3,colors.green,colors.gray,"+",function()
-        selectedCount = selectedCount + 1
-        if selectedCount > kristed.getItemCount(kristed.config.items[selectedItem].id) then
-            selectedCount = kristed.getItemCount(kristed.config.items[selectedItem].id)
-        end
-        if selectedCount < 1 then
-            selectedCount = 1
-        end
+    addButton(math.floor((w)/2)-10,10,5,3,colors.red,colors.gray,"-10",function()
+        selectedCount = selectedCount - math.min(10,selectedCount-1)
+    end)
+    addButton(math.floor((w)/2)-16,10,5,3,colors.red,colors.gray,"-64",function()
+        selectedCount = selectedCount - math.min(64,selectedCount-1)
+    end)
+
+    addButton(math.floor((w)/2)+4,10,3,3,colors.green,colors.gray,"+",function()
+        selectedCount = selectedCount + math.min(1,kristed.getItemCount(kristed.config.items[selectedItem].id)-selectedCount)
+    end)
+    addButton(math.floor((w)/2)+8,10,5,3,colors.green,colors.gray,"+10",function()
+        selectedCount = selectedCount + math.min(10,kristed.getItemCount(kristed.config.items[selectedItem].id)-selectedCount)
+    end)
+    addButton(math.floor((w)/2)+14,10,5,3,colors.green,colors.gray,"+64",function()
+        selectedCount = selectedCount + math.min(64,kristed.getItemCount(kristed.config.items[selectedItem].id)-selectedCount)
     end)
     -- Render the price(s)
     screen.setBackgroundColor(mbg)
     screen.setTextColor(mfg)
-    screen.setCursorPos(1,14)
-    screen.write("Price/i: "..kristed.config.items[selectedItem].price.."kst/i")
-    screen.setCursorPos(1,15)
-    screen.write("Price: "..kristed.config.items[selectedItem].price*selectedCount.."kst")
+    writeToCenter("Price/i: "..kristed.config.items[selectedItem].price.."kst/i", 14)
+    writeToCenter("Price: "..kristed.config.items[selectedItem].price*selectedCount.."kst", 15)
     -- Render the add cart button
-    addButton(1,17,13,3,colors.blue,colors.gray,"Add to cart",function()
+    addButton(math.floor((w-11)/2),17,13,3,colors.blue,colors.gray,"Add to cart",function()
         table.insert(cartt, {
             item = selectedItem,
             count = selectedCount,
