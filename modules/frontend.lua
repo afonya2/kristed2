@@ -480,7 +480,10 @@ function frontend()
     rerender()
     function clicker()
         while true do
-            local event, side, x, y = os.pullEvent("monitor_touch")
+            local event, side, x, y
+            repeat
+                event, side, x, y = os.pullEvent("monitor_touch")
+            until side == kristed.config.monitorId
             for k,v in ipairs(btns) do
                 if (x >= v.x) and (x <= v.w) and (y >= v.y) and (y <= v.h) then
                     v.onclick()
